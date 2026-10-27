@@ -1,0 +1,283 @@
+<div>
+
+  <div class="mb-8">
+
+    <p class="text-sm text-gray-500 mb-2">
+      Dashboard / Inventario / Movimientos
+    </p>
+
+    <div class="flex items-center gap-4">
+
+      <h1 class="text-3xl font-bold text-gray-800">
+        Movimientos de Inventario
+      </h1>
+
+      <span
+        class="bg-purple-100 text-primary px-4 py-2 rounded-full text-sm font-medium">
+
+        {{ movimientos().length }} movimientos registrados
+
+      </span>
+
+    </div>
+
+  </div>
+
+  <!-- Filtros -->
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+
+    <select
+      [(ngModel)]="idProductoFiltro"
+      class="border border-gray-300 rounded-lg px-4 py-3">
+
+      <option [ngValue]="null">
+        Filtrar por producto
+      </option>
+
+      @for (producto of productos(); track producto.idProducto) {
+
+        <option [ngValue]="producto.idProducto">
+          {{ producto.nombre }}
+        </option>
+
+      }
+
+    </select>
+
+    <select
+      [(ngModel)]="tipoMovimientoFiltro"
+      class="border border-gray-300 rounded-lg px-4 py-3">
+
+      <option value="">
+        Filtrar por tipo
+      </option>
+
+      <option value="Entrada">
+        Entrada
+      </option>
+
+      <option value="Ajuste">
+        Ajuste
+      </option>
+
+      <option value="Baja">
+        Baja
+      </option>
+
+    </select>
+
+    <button
+      type="button"
+      (click)="buscar()"
+      class="border-2 border-primary text-primary font-semibold rounded-lg px-4 py-3 hover:bg-primary hover:text-white transition">
+
+      Buscar
+
+    </button>
+
+  </div>
+
+  <!-- Formulario -->
+
+  <form
+    [formGroup]="movimientoForm"
+    (ngSubmit)="guardar()"
+    class="bg-white rounded-xl shadow-sm p-6 mb-8">
+
+    <h2 class="text-lg font-semibold mb-4">
+      Registrar Movimiento
+    </h2>
+
+    @if (mensajeExito) {
+      <p class="text-green-600 bg-green-50 border border-green-200 rounded-lg px-4 py-3 mb-4">
+        {{ mensajeExito }}
+      </p>
+    }
+
+    @if (mensajeError) {
+      <p class="text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
+        {{ mensajeError }}
+      </p>
+    }
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+      <select
+        formControlName="idProducto"
+        class="border border-gray-300 rounded-lg px-4 py-3">
+
+        <option [ngValue]="null">
+          Seleccione producto
+        </option>
+
+        @for (producto of productos(); track producto.idProducto) {
+
+          <option [ngValue]="producto.idProducto">
+            {{ producto.nombre }}
+          </option>
+
+        }
+
+      </select>
+
+      <select
+        formControlName="tipoMovimiento"
+        class="border border-gray-300 rounded-lg px-4 py-3">
+
+        <option value="Entrada">
+          Entrada
+        </option>
+
+        <option value="Ajuste">
+          Ajuste
+        </option>
+
+        <option value="Baja">
+          Baja
+        </option>
+
+      </select>
+
+      <input
+        type="number"
+        min="1"
+        placeholder="Cantidad"
+        formControlName="cantidad"
+        class="border border-gray-300 rounded-lg px-4 py-3"
+      />
+
+    </div>
+
+    <textarea
+      rows="4"
+      placeholder="Motivo (opcional)"
+      formControlName="motivo"
+      class="w-full border border-gray-300 rounded-lg px-4 py-3 mb-6">
+    </textarea>
+
+    <div class="flex flex-col sm:flex-row flex-wrap justify-end gap-3">
+
+      <button
+        type="button"
+        (click)="limpiarFormulario()"
+        class="border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition">
+
+        Limpiar
+
+      </button>
+
+      <button
+        type="submit"
+        [disabled]="movimientoForm.invalid"
+        class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition disabled:opacity-40 disabled:cursor-not-allowed">
+
+        Registrar
+
+      </button>
+
+    </div>
+
+  </form>
+
+  <!-- Tabla -->
+
+  <h2 class="text-xl font-semibold mb-4">
+    Movimientos registrados
+  </h2>
+
+  <div class="bg-white rounded-xl shadow-sm overflow-x-auto">
+
+    <table class="w-full min-w-[640px]">
+
+      <thead class="bg-gray-100">
+
+        <tr>
+
+          <th class="text-left px-6 py-4">
+            Fecha
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Tipo
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Producto
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Cantidad
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Motivo
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (movimiento of movimientos(); track movimiento.idMovimiento) {
+
+          <tr class="border-t border-gray-200">
+
+            <td class="px-6 py-4">
+              {{ movimiento.fechaMovimiento }}
+            </td>
+
+            <td class="px-6 py-4">
+
+              @if (movimiento.tipoMovimiento === 'Entrada') {
+
+                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
+                  Entrada
+                </span>
+
+              } @else if (movimiento.tipoMovimiento === 'Ajuste') {
+
+                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">
+                  Ajuste
+                </span>
+
+              } @else if (movimiento.tipoMovimiento === 'Baja') {
+
+                <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
+                  Baja
+                </span>
+
+              } @else {
+
+                <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-medium">
+                  {{ movimiento.tipoMovimiento }}
+                </span>
+
+              }
+
+            </td>
+
+            <td class="px-6 py-4">
+              {{ movimiento.nombreProducto }}
+            </td>
+
+            <td class="px-6 py-4">
+              {{ movimiento.cantidad }}
+            </td>
+
+            <td class="px-6 py-4">
+              {{ movimiento.motivo }}
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

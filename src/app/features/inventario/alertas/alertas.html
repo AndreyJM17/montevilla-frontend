@@ -1,0 +1,198 @@
+<div>
+
+  <div class="mb-8">
+
+    <p class="text-sm text-gray-500 mb-2">
+      Dashboard / Inventario / Alertas
+    </p>
+
+    <div class="flex items-center gap-4">
+
+      <h1 class="text-3xl font-bold text-gray-800">
+        Alertas de Inventario
+      </h1>
+
+      <span
+        class="bg-purple-100 text-primary px-4 py-2 rounded-full text-sm font-medium">
+
+        {{ productosConAlerta().length }} productos con alerta
+
+      </span>
+
+    </div>
+
+  </div>
+
+  <!-- Resumen -->
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+    <div class="bg-white rounded-xl shadow-sm p-6">
+
+      <p class="text-sm text-gray-500 mb-1">
+        Sin stock
+      </p>
+
+      <p class="text-2xl font-bold text-red-600">
+        {{ contarSinStock() }}
+      </p>
+
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6">
+
+      <p class="text-sm text-gray-500 mb-1">
+        Stock bajo
+      </p>
+
+      <p class="text-2xl font-bold text-yellow-600">
+        {{ contarStockBajo() }}
+      </p>
+
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6">
+
+      <p class="text-sm text-gray-500 mb-1">
+        Vencidos
+      </p>
+
+      <p class="text-2xl font-bold text-red-600">
+        {{ contarVencidos() }}
+      </p>
+
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6">
+
+      <p class="text-sm text-gray-500 mb-1">
+        Por vencer
+      </p>
+
+      <p class="text-2xl font-bold text-yellow-600">
+        {{ contarPorVencer() }}
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Tabla -->
+
+  <h2 class="text-xl font-semibold mb-4">
+    Productos que requieren atención
+  </h2>
+
+  <div class="bg-white rounded-xl shadow-sm overflow-x-auto">
+
+    <table class="w-full min-w-[640px]">
+
+      <thead class="bg-gray-100">
+
+        <tr>
+
+          <th class="text-left px-6 py-4">
+            Código
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Nombre
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Stock
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Vencimiento
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Alerta
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (producto of productosConAlerta(); track producto.idProducto) {
+
+          <tr class="border-t border-gray-200">
+
+            <td class="px-6 py-4">
+              {{ producto.codigo }}
+            </td>
+
+            <td class="px-6 py-4">
+              {{ producto.nombre }}
+            </td>
+
+            <td class="px-6 py-4">
+              {{ producto.stockActual }}
+            </td>
+
+            <td class="px-6 py-4">
+              {{ producto.fechaVencimiento }}
+            </td>
+
+            <td class="px-6 py-4 flex flex-wrap gap-2">
+
+              @if (producto.alertaSinStock) {
+
+                <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
+                  Sin stock
+                </span>
+
+              }
+
+              @if (producto.alertaStockBajo) {
+
+                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">
+                  Stock bajo
+                </span>
+
+              }
+
+              @if (producto.alertaVencido) {
+
+                <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
+                  Vencido
+                </span>
+
+              }
+
+              @if (producto.alertaPorVencer) {
+
+                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">
+                  Por vencer
+                </span>
+
+              }
+
+            </td>
+
+          </tr>
+
+        }
+
+        @if (productosConAlerta().length === 0) {
+
+          <tr>
+
+            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+              No hay productos con alertas activas
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

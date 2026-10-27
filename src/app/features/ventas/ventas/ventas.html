@@ -1,0 +1,41 @@
+<div>
+
+  <div class="mb-8">
+
+    <p class="text-sm text-gray-500 mb-2">
+      Dashboard / Ventas
+    </p>
+
+    <h1 class="text-3xl font-bold text-gray-800">
+      Ventas
+    </h1>
+
+  </div>
+
+  <!-- Tabs -->
+
+  <div class="flex gap-2 mb-8 border-b border-gray-200 overflow-x-auto">
+
+    <a
+      routerLink="/ventas/registrar"
+      routerLinkActive="border-primary text-primary"
+      class="px-6 py-3 border-b-2 border-transparent font-semibold text-gray-500 hover:text-primary transition whitespace-nowrap">
+
+      Registrar Venta
+
+    </a>
+
+    <a
+      routerLink="/ventas/historial"
+      routerLinkActive="border-primary text-primary"
+      class="px-6 py-3 border-b-2 border-transparent font-semibold text-gray-500 hover:text-primary transition whitespace-nowrap">
+
+      Historial
+
+    </a>
+
+  </div>
+
+  <router-outlet />
+
+</div>

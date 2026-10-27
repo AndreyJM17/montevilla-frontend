@@ -1,0 +1,118 @@
+<div>
+
+  <!-- Filtros -->
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+    <input
+      type="date"
+      [(ngModel)]="fechaDesde"
+      class="border border-gray-300 rounded-lg px-4 py-3"
+    />
+
+    <input
+      type="date"
+      [(ngModel)]="fechaHasta"
+      class="border border-gray-300 rounded-lg px-4 py-3"
+    />
+
+    <select
+      [(ngModel)]="tipoItemFiltro"
+      class="border border-gray-300 rounded-lg px-4 py-3">
+
+      <option value="">Todos los tipos</option>
+      <option value="Producto">Producto</option>
+      <option value="Servicio">Servicio</option>
+
+    </select>
+
+    <button
+      type="button"
+      (click)="buscar()"
+      class="bg-primary text-white font-semibold rounded-lg px-4 py-3 hover:bg-primary-dark transition">
+
+      Generar Reporte
+
+    </button>
+
+  </div>
+
+  <!-- Exportación -->
+
+  <div class="flex flex-col sm:flex-row flex-wrap justify-end gap-3 mb-4">
+
+    <button
+      type="button"
+      (click)="exportarCsv()"
+      [disabled]="productos().length === 0"
+      class="border-2 border-primary text-primary font-semibold rounded-lg px-4 py-2 text-sm hover:bg-primary hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed">
+
+      Exportar CSV
+
+    </button>
+
+    <button
+      type="button"
+      (click)="exportarPdf()"
+      [disabled]="productos().length === 0"
+      class="border-2 border-primary text-primary font-semibold rounded-lg px-4 py-2 text-sm hover:bg-primary hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed">
+
+      Exportar PDF
+
+    </button>
+
+  </div>
+
+  <!-- Tabla -->
+
+  <div class="bg-white rounded-xl shadow-sm overflow-x-auto">
+
+    <table class="w-full min-w-[640px]">
+
+      <thead class="bg-gray-100">
+
+        <tr>
+          <th class="text-left px-6 py-4">Código</th>
+          <th class="text-left px-6 py-4">Nombre</th>
+          <th class="text-left px-6 py-4">Categoría</th>
+          <th class="text-left px-6 py-4">Tipo</th>
+          <th class="text-left px-6 py-4">Cantidad utilizada</th>
+          <th class="text-left px-6 py-4">N° de atenciones</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (producto of productos(); track producto.idProducto) {
+
+          <tr class="border-t border-gray-200">
+
+            <td class="px-6 py-4">{{ producto.codigo }}</td>
+            <td class="px-6 py-4">{{ producto.nombre }}</td>
+            <td class="px-6 py-4">{{ producto.categoria }}</td>
+            <td class="px-6 py-4">{{ producto.tipoItem }}</td>
+            <td class="px-6 py-4">{{ producto.cantidadUtilizada }}</td>
+            <td class="px-6 py-4">{{ producto.numeroAtenciones }}</td>
+
+          </tr>
+
+        }
+
+        @if (productos().length === 0) {
+
+          <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+              No hay atenciones para los filtros seleccionados
+            </td>
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

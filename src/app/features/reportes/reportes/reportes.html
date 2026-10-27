@@ -1,0 +1,77 @@
+<div>
+
+  <div class="mb-8">
+
+    <p class="text-sm text-gray-500 mb-2">
+      Dashboard / Reportes
+    </p>
+
+    <h1 class="text-3xl font-bold text-gray-800">
+      Reportes
+    </h1>
+
+  </div>
+
+  <!-- Tabs -->
+
+  <div class="flex gap-2 mb-8 border-b border-gray-200 flex-wrap">
+
+    <a
+      routerLink="/reportes/citas"
+      routerLinkActive="border-primary text-primary"
+      class="px-6 py-3 border-b-2 border-transparent font-semibold text-gray-500 hover:text-primary transition">
+
+      Citas
+
+    </a>
+
+    <a
+      routerLink="/reportes/atenciones"
+      routerLinkActive="border-primary text-primary"
+      class="px-6 py-3 border-b-2 border-transparent font-semibold text-gray-500 hover:text-primary transition">
+
+      Atenciones
+
+    </a>
+
+    <a
+      routerLink="/reportes/ventas"
+      routerLinkActive="border-primary text-primary"
+      class="px-6 py-3 border-b-2 border-transparent font-semibold text-gray-500 hover:text-primary transition">
+
+      Ventas
+
+    </a>
+
+    <a
+      routerLink="/reportes/inventario"
+      routerLinkActive="border-primary text-primary"
+      class="px-6 py-3 border-b-2 border-transparent font-semibold text-gray-500 hover:text-primary transition">
+
+      Inventario
+
+    </a>
+
+    <a
+      routerLink="/reportes/productos-mas-vendidos"
+      routerLinkActive="border-primary text-primary"
+      class="px-6 py-3 border-b-2 border-transparent font-semibold text-gray-500 hover:text-primary transition">
+
+      Productos Más Vendidos
+
+    </a>
+
+    <a
+      routerLink="/reportes/productos-mas-utilizados"
+      routerLinkActive="border-primary text-primary"
+      class="px-6 py-3 border-b-2 border-transparent font-semibold text-gray-500 hover:text-primary transition">
+
+      Productos Más Utilizados
+
+    </a>
+
+  </div>
+
+  <router-outlet />
+
+</div>

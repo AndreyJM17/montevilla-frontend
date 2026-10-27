@@ -1,0 +1,28 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+
+/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+
+@theme {
+  /* Morado principal — botones primarios, links activos */
+  --color-primary: #7C3AED;
+  --color-primary-dark: #6B21A8;
+
+  /* Degradado del panel lateral de login */
+  --color-panel-from: #A78BC9;
+  --color-panel-to: #C4B5E0;
+
+  /* Sidebar */
+  --color-sidebar: #6D28D9;
+
+  /* Badges de estado */
+  --color-badge-success-bg: #E9D5FF;
+  --color-badge-success-text: #6B21A8;
+  --color-badge-pending-bg: #F3F4F6;
+  --color-badge-pending-text: #4B5563;
+
+  /* Fondo lila claro para topbar y tablas */
+  --color-surface-light: #F3E8FF;
+}

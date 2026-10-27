@@ -1,0 +1,230 @@
+<div>
+
+  <div class="mb-8">
+
+    <p class="text-sm text-gray-500 mb-2">
+      Dashboard / Roles
+    </p>
+
+    <div class="flex items-center gap-4">
+
+      <h1 class="text-3xl font-bold text-gray-800">
+        Gestión de Roles
+      </h1>
+
+      <span
+        class="bg-purple-100 text-primary px-4 py-2 rounded-full text-sm font-medium">
+        {{ roles().length }} roles registrados
+      </span>
+
+    </div>
+
+  </div>
+
+  <!-- Filtros -->
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+    <input
+      type="text"
+      [(ngModel)]="busqueda"
+      placeholder="Buscar por nombre..."
+      class="border border-gray-300 rounded-lg px-4 py-3"
+    />
+
+    <select
+      [(ngModel)]="estadoFiltro"
+      class="border border-gray-300 rounded-lg px-4 py-3">
+
+      <option value="">
+        Filtrar por estado
+      </option>
+
+      <option value="true">
+        Activo
+      </option>
+
+      <option value="false">
+        Inactivo
+      </option>
+
+    </select>
+
+    <button
+      type="button"
+      (click)="buscarRoles()"
+      class="border-2 border-primary text-primary font-semibold rounded-lg px-4 py-3 hover:bg-primary hover:text-white transition">
+      Buscar
+    </button>
+
+    <button
+      type="button"
+      (click)="limpiarFormulario()"
+      class="bg-primary text-white font-semibold rounded-lg px-4 py-3 hover:bg-primary-dark transition">
+      + Nuevo Rol
+    </button>
+
+  </div>
+
+  <!-- Formulario -->
+
+  <form
+    [formGroup]="rolForm"
+    (ngSubmit)="guardar()"
+    class="bg-white rounded-xl shadow-sm p-6 mb-8">
+
+    <h2 class="text-lg font-semibold mb-4">
+      Datos del rol
+    </h2>
+
+    @if (mensajeExito) {
+      <p class="text-green-600 bg-green-50 border border-green-200 rounded-lg px-4 py-3 mb-4">
+        {{ mensajeExito }}
+      </p>
+    }
+
+    @if (mensajeError) {
+      <p class="text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
+        {{ mensajeError }}
+      </p>
+    }
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+      <input
+        type="text"
+        placeholder="Nombre"
+        formControlName="nombre"
+        class="border border-gray-300 rounded-lg px-4 py-3"
+      />
+
+      <input
+        type="text"
+        placeholder="Descripción"
+        formControlName="descripcion"
+        class="border border-gray-300 rounded-lg px-4 py-3"
+      />
+
+    </div>
+
+    <div class="flex flex-col sm:flex-row flex-wrap justify-end gap-3">
+
+      <button
+        type="button"
+        (click)="limpiarFormulario()"
+        class="border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition">
+        Limpiar
+      </button>
+
+      <button
+        type="button"
+        (click)="cambiarEstado()"
+        class="border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition">
+        Cambiar Estado
+      </button>
+
+      <button
+        type="button"
+        class="border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition">
+        Editar
+      </button>
+
+      <button
+        type="submit"
+        [disabled]="rolForm.invalid"
+        class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition disabled:opacity-40 disabled:cursor-not-allowed">
+        Guardar
+      </button>
+
+    </div>
+
+  </form>
+
+  <!-- Tabla -->
+
+  <h2 class="text-xl font-semibold mb-4">
+    Roles registrados
+  </h2>
+
+  <div class="bg-white rounded-xl shadow-sm overflow-x-auto">
+
+    <table class="w-full min-w-[640px]">
+
+      <thead class="bg-gray-100">
+
+        <tr>
+
+          <th class="text-left px-6 py-4">
+            Nombre
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Descripción
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Estado
+          </th>
+
+          <th class="text-left px-6 py-4">
+            Acciones
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (rol of roles(); track rol.idRol) {
+
+          <tr class="border-t border-gray-200">
+
+            <td class="px-6 py-4">
+              {{ rol.nombre }}
+            </td>
+
+            <td class="px-6 py-4">
+              {{ rol.descripcion }}
+            </td>
+
+            <td class="px-6 py-4">
+
+              @if (rol.estado) {
+
+                <span class="text-green-600 font-medium">
+                  Activo
+                </span>
+
+              } @else {
+
+                <span class="text-red-600 font-medium">
+                  Inactivo
+                </span>
+
+              }
+
+            </td>
+
+            <td class="px-6 py-4">
+
+              <button
+                type="button"
+                (click)="seleccionarRol(rol)"
+                class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium">
+                Editar
+              </button>
+
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

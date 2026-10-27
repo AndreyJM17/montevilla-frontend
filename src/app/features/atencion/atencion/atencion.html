@@ -1,0 +1,305 @@
+<div>
+
+  <!-- Encabezado -->
+  <div class="mb-8">
+    <p class="text-sm text-gray-500 mb-2">Dashboard / Atención Veterinaria</p>
+    <div class="flex items-center gap-4">
+      <h1 class="text-3xl font-bold text-gray-800">Atención Veterinaria</h1>
+      <span class="bg-purple-100 text-primary px-4 py-2 rounded-full text-sm font-medium">{{ atenciones().length }} atenciones registradas</span>
+    </div>
+  </div>
+  
+
+  <!-- Filtros -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+    <select [(ngModel)]="idMascotaFiltro" class="border border-gray-300 rounded-lg px-4 py-3">
+      <option [ngValue]="null">Filtrar por mascota</option>
+      @for (mascota of mascotas(); track mascota.idMascota) {
+        <option [ngValue]="mascota.idMascota">{{ mascota.nombre }}</option>
+      }
+    </select>
+
+    <select [(ngModel)]="idVeterinarioFiltro" class="border border-gray-300 rounded-lg px-4 py-3">
+      <option [ngValue]="null">Filtrar por veterinario</option>
+      @for (vet of veterinarios(); track vet.idUsuario) {
+        <option [ngValue]="vet.idUsuario">{{ vet.nombreCompleto }}</option>
+      }
+    </select>
+
+    <button type="button" (click)="buscarAtenciones()" class="border-2 border-primary text-primary font-semibold rounded-lg px-4 py-3 hover:bg-primary hover:text-white transition">Buscar</button>
+
+    <button type="button" (click)="limpiarFormulario()" class="bg-primary text-white font-semibold rounded-lg px-4 py-3 hover:bg-primary-dark transition">+ Nueva Atención</button>
+
+  </div>
+
+  <!-- Formulario de nueva atención -->
+  <form [formGroup]="atencionForm" (ngSubmit)="guardar()" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+
+    <h2 class="text-lg font-semibold mb-4">Datos de la atención</h2>
+
+    @if (mensajeExito) {
+      <p class="text-green-600 bg-green-50 border border-green-200 rounded-lg px-4 py-3 mb-4">
+        {{ mensajeExito }}
+      </p>
+    }
+
+    @if (mensajeError) {
+      <p class="text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
+        {{ mensajeError }}
+      </p>
+    }
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+
+      <!--
+        CORRECCIÓN 1 — citasCompletadas → citasConfirmadas
+        El flujo correcto es: Confirmada → (registrar atención) → Completada.
+        El SP completa la cita automáticamente al registrar la atención.
+        Por eso el select muestra citas Confirmadas, no Completadas.
+      -->
+      <select formControlName="idCita"(change)="actualizarCitaSeleccionada()" class="border border-gray-300 rounded-lg px-4 py-3">
+        <option [ngValue]="null">Seleccionar cita confirmada</option>
+        @for (cita of citasConfirmadas(); track cita.idCita) {
+          <option [ngValue]="cita.idCita">{{ cita.fechaCita }} {{ cita.horaCita }} — {{ cita.nombreMascota }}</option>
+        }
+      </select>
+
+      <!-- Veterinario -->
+      <select formControlName="idUsuarioVeterinario" [disabled]="true" class="border border-gray-300 rounded-lg px-4 py-3 bg-gray-100">
+        <option [ngValue]="null">Seleccionar veterinario</option>
+        @for (vet of veterinarios(); track vet.idUsuario) {
+          <option [ngValue]="vet.idUsuario">{{ vet.nombreCompleto }}</option>
+        }
+      </select>
+
+      <!-- Peso actual -->
+      <input type="number" step="0.01" min="0.01" placeholder="Peso actual (kg)" formControlName="pesoActual" class="border border-gray-300 rounded-lg px-4 py-3" />
+
+      @if (citaSeleccionada?.motivoConsulta) {
+        <div class="col-span-2">
+          <label class="block text-sm text-gray-500 mb-1">Motivo de consulta</label>
+          <div class="border border-gray-300 rounded-lg px-4 py-3 bg-gray-50 text-gray-700">
+            {{ citaSeleccionada?.motivoConsulta }}
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Campos clínicos -->
+    <div class="grid grid-cols-1 gap-4 mb-4">
+
+      <textarea rows="2" placeholder="Síntomas observados" formControlName="sintomas" class="w-full border border-gray-300 rounded-lg px-4 py-3"></textarea>
+
+      <textarea rows="2" placeholder="Diagnóstico" formControlName="diagnostico" class="w-full border border-gray-300 rounded-lg px-4 py-3"></textarea>
+
+      <textarea rows="2" placeholder="Tratamiento indicado" formControlName="tratamiento" class="w-full border border-gray-300 rounded-lg px-4 py-3"></textarea>
+
+      <textarea rows="2" placeholder="Observaciones adicionales" formControlName="observaciones" class="w-full border border-gray-300 rounded-lg px-4 py-3"></textarea>
+
+    </div>
+
+    <!-- Productos y servicios utilizados (carrito) -->
+    <div class="mb-6">
+
+      <h3 class="text-md font-semibold mb-3">Productos y servicios utilizados (opcional)</h3>
+
+      <!-- Selector para agregar ítem al carrito -->
+      <div class="flex flex-col sm:flex-row gap-3 mb-4">
+
+        <select [(ngModel)]="idProductoNuevo" [ngModelOptions]="{standalone: true}" class="border border-gray-300 rounded-lg px-4 py-2 flex-1">
+          <option [ngValue]="null">Seleccione un producto o servicio</option>
+          @for (producto of productosDisponibles(); track producto.idProducto) {
+            <option [ngValue]="producto.idProducto">{{ producto.codigo }} - {{ producto.nombre }}</option>
+          }
+        </select>
+
+        <input type="number" [(ngModel)]="cantidadProductoNuevo" [ngModelOptions]="{standalone: true}" min="1" placeholder="Cantidad" class="border border-gray-300 rounded-lg px-4 py-2 w-32" />
+
+        <button type="button" (click)="agregarProductoAlCarrito()" class="border-2 border-primary text-primary px-4 py-2 rounded-lg font-semibold hover:bg-primary hover:text-white transition">+ Agregar</button>
+
+      </div>
+
+      <!-- Lista de productos en el carrito -->
+      @if (productosEnForm().length > 0) {
+        <div class="bg-gray-50 rounded-lg overflow-x-auto">
+          <table class="w-full min-w-[640px]">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="text-left px-4 py-3">Producto / Servicio</th>
+                <th class="text-left px-4 py-3">Cantidad</th>
+                <th class="text-left px-4 py-3">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of productosEnForm(); track item.idProducto) {
+                <tr class="border-t border-gray-200">
+                  <td class="px-4 py-3">{{ nombreProducto(item.idProducto) }}</td>
+                  <td class="px-4 py-3">{{ item.cantidad }}</td>
+                  <td class="px-4 py-3">
+                    <button type="button" (click)="quitarProductoDelCarrito(item.idProducto)" class="text-red-500 hover:text-red-700 font-medium text-sm">Quitar</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+    </div>
+
+    <div class="flex flex-col sm:flex-row flex-wrap justify-end gap-3">
+
+      <button type="button" (click)="limpiarFormulario()" class="border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition">Limpiar</button>
+
+      <button type="submit" [disabled]="atencionForm.invalid" class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition disabled:opacity-40 disabled:cursor-not-allowed">Guardar Atención</button>
+
+    </div>
+
+  </form>
+
+  <!-- Panel de expediente clínico -->
+  @if (modoVerExpediente) {
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8 border-l-4 border-primary">
+
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold">Expediente Clínico</h2>
+        <button type="button" (click)="cerrarExpediente()" class="text-gray-500 hover:text-gray-700 font-medium">Cerrar</button>
+      </div>
+
+      @if (expediente().length > 0) {
+
+        <!-- Datos del expediente (primera fila) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
+          <div><p class="text-sm text-gray-500">Mascota</p><p class="font-medium">{{ expediente()[0].nombreMascota }}</p></div>
+          <div><p class="text-sm text-gray-500">Propietario</p><p class="font-medium">{{ expediente()[0].nombreCliente }}</p></div>
+          <div><p class="text-sm text-gray-500">Fecha apertura</p><p class="font-medium">{{ expediente()[0].fechaApertura }}</p></div>
+          @if (expediente()[0].alergias) {
+            <div class="col-span-3"><p class="text-sm text-gray-500">Alergias</p><p class="font-medium">{{ expediente()[0].alergias }}</p></div>
+          }
+          @if (expediente()[0].antecedentesMedicos) {
+            <div class="col-span-3"><p class="text-sm text-gray-500">Antecedentes médicos</p><p class="font-medium">{{ expediente()[0].antecedentesMedicos }}</p></div>
+          }
+        </div>
+
+        <!-- Historial de atenciones -->
+        <h3 class="text-md font-semibold mb-3">Historial de atenciones</h3>
+
+        @if (expediente()[0].idAtencion) {
+          <div class="space-y-4">
+            @for (fila of expediente(); track fila.idAtencion) {
+              <div class="border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-medium text-primary">{{ fila.fechaAtencion }}</span>
+                  <span class="text-sm text-gray-500">Dr/Dra. {{ fila.nombreVeterinario }}</span>
+                </div>
+                @if (fila.pesoActual) {
+                  <p class="text-sm mb-1"><span class="font-medium">Peso:</span> {{ fila.pesoActual }} kg</p>
+                }
+                @if (fila.motivoConsulta) {
+                  <p class="text-sm mb-1"> <span class="font-medium">Motivo de consulta:</span>{{ fila.motivoConsulta }}</p>
+                }
+                @if (fila.sintomas) {
+                  <p class="text-sm mb-1"><span class="font-medium">Síntomas:</span> {{ fila.sintomas }}</p>
+                }
+                @if (fila.diagnostico) {
+                  <p class="text-sm mb-1"><span class="font-medium">Diagnóstico:</span> {{ fila.diagnostico }}</p>
+                }
+                @if (fila.tratamiento) {
+                  <p class="text-sm mb-1"><span class="font-medium">Tratamiento:</span> {{ fila.tratamiento }}</p>
+                }
+                @if (fila.observacionesAtencion) {
+                  <p class="text-sm"><span class="font-medium">Observaciones:</span> {{ fila.observacionesAtencion }}</p>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="text-gray-500 text-sm">Esta mascota aún no tiene atenciones registradas.</p>
+        }
+
+      }
+
+    </div>
+  }
+
+  <!--
+    CORRECCIÓN 2 — Tabla de productos con columna Tipo
+    Se agrega la columna Tipo (Producto / Servicio) para reflejar
+    el atributo tipo_item de la tabla producto. El badge visual
+    distingue visualmente entre productos físicos y servicios.
+  -->
+  @if (productosAtencion().length > 0) {
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+      <h2 class="text-lg font-semibold mb-4">Productos y servicios utilizados en esta atención</h2>
+      <div class="overflow-x-auto">
+      <table class="w-full min-w-[640px]">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="text-left px-6 py-4">Nombre</th>
+            <th class="text-left px-6 py-4">Tipo</th>
+            <th class="text-left px-6 py-4">Categoría</th>
+            <th class="text-left px-6 py-4">Cantidad</th>
+            <th class="text-left px-6 py-4">Precio unitario</th>
+            <th class="text-left px-6 py-4">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (prod of productosAtencion(); track prod.idAtencionProducto) {
+            <tr class="border-t border-gray-200">
+              <td class="px-6 py-4">{{ prod.nombreProducto }}</td>
+              <td class="px-6 py-4">
+                @if (prod.tipoItem === 'Servicio') {
+                  <span class="bg-blue-100 text-blue-700 font-medium px-3 py-1 rounded-full text-sm">Servicio</span>
+                } @else {
+                  <span class="bg-gray-100 text-gray-600 font-medium px-3 py-1 rounded-full text-sm">Producto</span>
+                }
+              </td>
+              <td class="px-6 py-4">{{ prod.categoria }}</td>
+              <td class="px-6 py-4">{{ prod.cantidadUtilizada }}</td>
+              <td class="px-6 py-4">₡{{ prod.precioUnitario | number:'1.0-0' }}</td>
+              <td class="px-6 py-4">₡{{ prod.subtotal | number:'1.0-0' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      </div>
+    </div>
+  }
+
+  <!-- Tabla de atenciones registradas -->
+  <h2 class="text-xl font-semibold mb-4">Atenciones registradas</h2>
+
+  <div class="bg-white rounded-xl shadow-sm overflow-x-auto">
+    <table class="w-full min-w-[640px]">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="text-left px-6 py-4">Fecha</th>
+          <th class="text-left px-6 py-4">Mascota</th>
+          <th class="text-left px-6 py-4">Cliente</th>
+          <th class="text-left px-6 py-4">Veterinario</th>
+          <th class="text-left px-6 py-4">Diagnóstico</th>
+          <th class="text-left px-6 py-4">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (atencion of atenciones(); track atencion.idAtencion) {
+          <tr class="border-t border-gray-200">
+            <td class="px-6 py-4">{{ atencion.fechaAtencion }}</td>
+            <td class="px-6 py-4">{{ atencion.nombreMascota }}</td>
+            <td class="px-6 py-4">{{ atencion.nombreCliente }}</td>
+            <td class="px-6 py-4">{{ atencion.nombreVeterinario }}</td>
+            <td class="px-6 py-4">{{ atencion.diagnostico }}</td>
+            <td class="px-6 py-4">
+              <div class="flex flex-col sm:flex-row flex-wrap gap-2">
+                <button type="button" (click)="verProductos(atencion.idAtencion)" class="border border-primary text-primary px-3 py-1 rounded-lg text-sm hover:bg-primary hover:text-white transition">Productos</button>
+                <button type="button" (click)="verExpediente(atencion.idMascota)" class="bg-primary text-white px-3 py-1 rounded-lg text-sm hover:bg-primary-dark transition">Expediente</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>

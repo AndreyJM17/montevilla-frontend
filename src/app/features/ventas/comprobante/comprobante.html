@@ -1,0 +1,127 @@
+@if (venta(); as v) {
+
+  <div class="max-w-2xl mx-auto">
+
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-8 mb-6">
+
+      <div class="flex items-center justify-between mb-6">
+
+        <div>
+
+          <h1 class="text-2xl font-bold text-gray-800">
+            Comprobante de Venta
+          </h1>
+
+          <p class="text-sm text-gray-500">
+            {{ v.numeroComprobante }}
+          </p>
+
+        </div>
+
+        <span
+          class="bg-purple-100 text-primary px-4 py-2 rounded-full text-sm font-medium">
+
+          {{ v.estado }}
+
+        </span>
+
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 mb-8">
+
+        <p><span class="font-semibold">Fecha:</span> {{ v.fechaVenta }}</p>
+        <p><span class="font-semibold">Método de pago:</span> {{ v.metodoPago }}</p>
+        <p><span class="font-semibold">Cliente:</span> {{ v.nombreCliente }}</p>
+        <p><span class="font-semibold">Mascota:</span> {{ v.nombreMascota }}</p>
+        <p><span class="font-semibold">Recepcionista:</span> {{ v.nombreRecepcionista }}</p>
+
+        @if (v.nombreAutorizaDescuento) {
+
+          <p><span class="font-semibold">Descuento autorizado por:</span> {{ v.nombreAutorizaDescuento }}</p>
+
+        }
+
+      </div>
+
+      <div class="overflow-x-auto">
+
+      <table class="w-full min-w-[640px] mb-6">
+
+        <thead class="bg-gray-100">
+
+          <tr>
+            <th class="text-left px-4 py-3">Producto / Servicio</th>
+            <th class="text-left px-4 py-3">Origen</th>
+            <th class="text-left px-4 py-3">Cantidad</th>
+            <th class="text-left px-4 py-3">Precio unitario</th>
+            <th class="text-left px-4 py-3">Subtotal</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          @for (linea of v.lineas; track linea.idDetalleVenta) {
+
+            <tr class="border-t border-gray-200">
+
+              <td class="px-4 py-3">{{ linea.nombreProducto }}</td>
+
+              <td class="px-4 py-3">
+
+                @if (linea.origen === 'Atencion') {
+
+                  <span class="bg-purple-100 text-primary px-2 py-1 rounded-full text-xs font-medium">
+                    Atención
+                  </span>
+
+                } @else {
+
+                  <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
+                    Adicional
+                  </span>
+
+                }
+
+              </td>
+
+              <td class="px-4 py-3">{{ linea.cantidad }}</td>
+              <td class="px-4 py-3">₡{{ linea.precioUnitario }}</td>
+              <td class="px-4 py-3">₡{{ linea.subtotal }}</td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+      </div>
+
+      <div class="flex flex-col items-end gap-1 text-sm text-gray-700">
+
+        <p>Subtotal: <span class="font-semibold">₡{{ v.subtotal }}</span></p>
+        <p>Descuento: <span class="font-semibold">₡{{ v.descuento }}</span></p>
+        <p class="text-lg text-gray-900">Total: <span class="font-bold">₡{{ v.total }}</span></p>
+
+      </div>
+
+    </div>
+
+    <div class="flex justify-end">
+
+      <button
+        type="button"
+        (click)="imprimir()"
+        class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition">
+
+        Imprimir
+
+      </button>
+
+    </div>
+
+  </div>
+
+}
