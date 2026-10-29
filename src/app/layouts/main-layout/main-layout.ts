@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { Router } from '@angular/router';
 import { Auth } from '../../features/auth/auth';
@@ -15,6 +15,23 @@ import { Auth } from '../../features/auth/auth';
 
 export class MainLayout {
   sidebarAbierto = signal(false);
+
+  // Iniciales del usuario logueado (ej. "Andrey Jimenez" -> "AJ"),
+  // se recalcula solo cuando cambia usuarioActual().
+  iniciales = computed(() => {
+    const nombreCompleto = this.auth.usuarioActual()?.nombreCompleto;
+
+    if (!nombreCompleto) {
+      return '';
+    }
+
+    const palabras = nombreCompleto.trim().split(/\s+/);
+
+    const primeraLetra = palabras[0]?.[0] ?? '';
+    const segundaLetra = palabras[1]?.[0] ?? '';
+
+    return (primeraLetra + segundaLetra).toUpperCase();
+  });
 
   constructor(
     public auth: Auth,
