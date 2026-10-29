@@ -50,7 +50,11 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        component: Dashboard
+        component: Dashboard,
+        canActivate: [authGuard, rolesGuard],
+        data: {
+        roles: ['Administrador']
+        }
       },
       {
         path: 'usuarios',
