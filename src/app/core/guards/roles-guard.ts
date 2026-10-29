@@ -26,6 +26,9 @@ export const rolesGuard: CanActivateFn =
       return true;
     }
 
-    router.navigate(['/dashboard']);
+    // Nunca rebotar a una ruta fija: si ese rol tampoco puede verla
+    // (ej. /dashboard es solo Administrador), queda en loop infinito.
+    // Se manda a la pantalla que SÍ le corresponde a este rol.
+    router.navigate([authService.rutaPorRol(rolActual)]);
     return false;
   };
