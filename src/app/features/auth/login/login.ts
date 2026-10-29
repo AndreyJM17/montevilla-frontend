@@ -19,6 +19,16 @@ export class Login {
 
   errorMensaje = '';
 
+  // Pantalla de aterrizaje según el rol: cada uno entra directo a lo
+  // que más usa, en vez de todos al Dashboard (que es solo de Administrador).
+  private readonly destinoPorRol: Record<string, string> = {
+    Administrador: '/dashboard',
+    Recepcionista: '/clientes',
+    Veterinario: '/mascotas',
+    Inventario: '/inventario',
+    Cliente: '/mis-citas'
+  };
+
   constructor(
     private authService: Auth,
     private router: Router
@@ -38,9 +48,7 @@ export class Login {
       next: (respuesta) => {
         this.authService.guardarUsuario(respuesta.usuario);
 
-        const destino = respuesta.usuario.nombreRol === 'Cliente'
-          ? '/mis-citas'
-          : '/dashboard';
+        const destino = this.destinoPorRol[respuesta.usuario.nombreRol] ?? '/login';
 
         this.router.navigate([destino]);
       },
