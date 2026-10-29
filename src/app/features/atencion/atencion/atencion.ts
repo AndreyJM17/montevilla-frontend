@@ -6,7 +6,7 @@ import {
   Validators
 } from '@angular/forms';
 
- import { DecimalPipe } from '@angular/common';
+ import { DecimalPipe, DatePipe } from '@angular/common';
 
 import {
   Atencion,
@@ -42,7 +42,8 @@ import {
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    DecimalPipe
+    DecimalPipe,
+    DatePipe
   ],
   templateUrl: './atencion.html',
   styleUrl: './atencion.css'

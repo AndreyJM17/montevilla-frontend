@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 import {
   Venta,
@@ -11,9 +12,11 @@ import {
   ExportarReporte
 } from '../../../core/services/exportar-reporte';
 
+const columnaFecha = new DatePipe('es-CR');
+
 const COLUMNAS: ColumnaReporte<Venta>[] = [
   { encabezado: 'Comprobante', valor: (v) => v.numeroComprobante },
-  { encabezado: 'Fecha', valor: (v) => v.fechaVenta },
+  { encabezado: 'Fecha', valor: (v) => columnaFecha.transform(v.fechaVenta, 'dd/MM/yyyy HH:mm') ?? '' },
   { encabezado: 'Cliente', valor: (v) => v.nombreCliente },
   { encabezado: 'Mascota', valor: (v) => v.nombreMascota },
   { encabezado: 'Subtotal', valor: (v) => v.subtotal },
@@ -27,7 +30,8 @@ const COLUMNAS: ColumnaReporte<Venta>[] = [
 @Component({
   selector: 'app-reporte-ventas',
   imports: [
-    FormsModule
+    FormsModule,
+    DatePipe
   ],
   templateUrl: './ventas.html',
   styleUrl: './ventas.css',

@@ -5,6 +5,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 import {
   Movimiento,
@@ -16,7 +17,8 @@ import {
   selector: 'app-movimientos',
   imports: [
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    DatePipe
   ],
   templateUrl: './movimientos.html',
   styleUrl: './movimientos.css',

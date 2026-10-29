@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 import {
   Atencion,
@@ -16,8 +17,10 @@ import {
   ExportarReporte
 } from '../../../core/services/exportar-reporte';
 
+const columnaFecha = new DatePipe('es-CR');
+
 const COLUMNAS: ColumnaReporte<Atencion>[] = [
-  { encabezado: 'Fecha', valor: (a) => a.fechaAtencion },
+  { encabezado: 'Fecha', valor: (a) => columnaFecha.transform(a.fechaAtencion, 'dd/MM/yyyy HH:mm') ?? '' },
   { encabezado: 'Mascota', valor: (a) => a.nombreMascota },
   { encabezado: 'Cliente', valor: (a) => a.nombreCliente },
   { encabezado: 'Veterinario', valor: (a) => a.nombreVeterinario },
@@ -28,7 +31,8 @@ const COLUMNAS: ColumnaReporte<Atencion>[] = [
 @Component({
   selector: 'app-reporte-atenciones',
   imports: [
-    FormsModule
+    FormsModule,
+    DatePipe
   ],
   templateUrl: './atenciones.html',
   styleUrl: './atenciones.css',

@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 import {
   Venta,
@@ -10,7 +11,8 @@ import {
 @Component({
   selector: 'app-historial-ventas',
   imports: [
-    FormsModule
+    FormsModule,
+    DatePipe
   ],
   templateUrl: './historial.html',
   styleUrl: './historial.css',

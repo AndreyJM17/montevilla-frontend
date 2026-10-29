@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 import {
   VentaDetalle,
@@ -8,7 +9,7 @@ import {
 
 @Component({
   selector: 'app-comprobante-venta',
-  imports: [],
+  imports: [DatePipe],
   templateUrl: './comprobante.html',
   styleUrl: './comprobante.css',
 })

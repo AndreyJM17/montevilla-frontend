@@ -107,7 +107,7 @@
           <tr class="border-t border-gray-200">
 
             <td class="px-6 py-4">{{ venta.numeroComprobante }}</td>
-            <td class="px-6 py-4">{{ venta.fechaVenta }}</td>
+            <td class="px-6 py-4">{{ venta.fechaVenta | date:'dd/MM/yyyy HH:mm' }}</td>
             <td class="px-6 py-4">{{ venta.nombreCliente }}</td>
             <td class="px-6 py-4">{{ venta.nombreMascota }}</td>
             <td class="px-6 py-4">₡{{ venta.subtotal }}</td>
